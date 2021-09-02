@@ -1,0 +1,21 @@
+version: '3.9'
+
+services:
+  database:
+    image: mysql:5.7
+    container_name: mysql
+    restart: unless-stopped
+    command: --max_allowed_packet=1073741824
+    volumes:
+      - mysql:/var/lib/mysql
+    env_file: .env
+    environment:
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+      MYSQL_USER: $MYSQL_USER
+      MYSQL_PASSWORD: $MYSQL_PASSWORD
+      MYSQL_DATABASE: $MYSQL_DATABASE
+
+    ports:
+      - 3308:3306
+volumes:
+  mysql:
