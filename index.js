@@ -1,7 +1,9 @@
-const Express = require('express'),
-      Mysql = require('mysql'),
+const Express = require('express');
+const Mysql = require('mysql'),
       dotenv = require('dotenv').config();
 
+const Routes = require('./src/routes.js'),
+      { Router } = Routes
 const app = Express(),
       { MYSQL_PASSWORD, MYSQL_USER, PORT } = process.env
 
@@ -12,18 +14,6 @@ const connection = Mysql.createConnection({
   port: 3308
 });
 
-connection.connect( (err) => {
-  if ( err ) {
-    return console.log( 'err: ', err);
-  }
-
-  console.log( 'connected');
-});
-
-
-app.get( '/', ( req, res ) => res.send( '<h1>Hello World from GET!</h1>' ))
-app.delete( '/', ( req, res ) => res.send( '<h1>Hello World from DELETE!</h1>' ))
-app.post( '/', ( req, res ) => res.send( '<h1>Hello World from POST!</h1>' ))
-app.patch( '/', ( req, res ) => res.send( '<h1>Hello World from PATCH!</h1>' ))
+app.use( Router( connection ) )
 
 app.listen( PORT, () => console.log( `App running on port ${ PORT }` ))
