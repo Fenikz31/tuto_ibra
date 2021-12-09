@@ -7,6 +7,9 @@ const Routes = require('./src/routes.js'),
 const app = Express(),
       { MYSQL_PASSWORD, MYSQL_USER, PORT } = process.env
 
+app.use( Express.urlencoded({ extended: true, limit: '100mb' }))
+app.use( Express.json({ limit: '100mb' }))
+
 const connection = Mysql.createConnection({
   host: 'localhost',
   user: MYSQL_USER,
