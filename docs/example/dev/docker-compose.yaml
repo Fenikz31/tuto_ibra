@@ -1,0 +1,59 @@
+version: '3'
+
+################################################################################
+# NETWORKS
+################################################################################
+networks:
+  dev-network-01:             # Network name given  for this stack
+    name: dev-network       # Network pre existing name Compose has to look to connect your app's container
+
+################################################################################
+# SERVICES
+# The exposed ports number and volumes path might change for you, make sure to change them
+################################################################################
+services:
+  tuto_macos_dev:
+    container_name: tuto_macos_dev
+    image: node:14
+
+    command: bash -c 'npm i && npm run watch'   # Depending of the scripts in your package.json
+    ports:
+      - '4000:4000'
+    environment:
+      NODE_ENV: development
+    restart: always
+    networks:
+      - dev-network-01
+    volumes:
+      - .:/usr/src/service
+      - ../logs:/var/log/dev
+    working_dir: /usr/src/service
+
+  mysql:
+    container_name: mysql_dev_env
+    image: mysql:8.0
+
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: mysql
+      MYSQL_PASSWORD: mysql
+    ports:
+      - '3307:3306'                         # default to - '3306:3306' if you do not have this port use for a mysql/mariaDB instance already.
+    volumes:
+      - ../volume/mysql/data:/var/lib/mysql  # make sure to change the first part by the correct path
+      - ../configs/mysql:/etc/mysql/conf.d   # make sure to change the first part by the correct path
+    restart: always
+    networks:
+      - dev-network-01
+
+  redis:
+    container_name: redis_dev_env
+    image: redis:6.2
+
+    ports:
+      - '6380:6379'                         # default to - '6379:6379' if you do not have this port use for a Redis instance already.
+    volumes:
+      - ../configs/redis/redis.conf:/usr/local/etc/redis/redis.conf # make sure to change the first part by the correct path
+    restart: always
+    networks:
+      - dev-network-01
